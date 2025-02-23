@@ -125,7 +125,7 @@ export default function Menu() {
               <span className="sr-only">Your Company</span>
               <img
                 alt=""
-                src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+                src="https://redpeg.com/wp-content/uploads/2022/01/Imagine-Dragons-Logo.png"
                 className="h-8 w-auto"
               />
             </a>

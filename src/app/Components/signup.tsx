@@ -1,20 +1,42 @@
+"use client";
+import { useState, createContext, useContext } from "react";
+
+// Creamos el contexto para el usuario registrado
+const UserContext = createContext<{ name: string } | null>(null);
+
 export default function Registro() {
+  const [user, setUser] = useState({ name: "", email: "", password: "" });
+  const [registeredUser, setRegisteredUser] = useState<{ name: string } | null>(
+    null
+  );
+
+  // Manejar cambios en los inputs
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  // Manejar el envío del formulario
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("Usuario registrado: ", user);
+    setRegisteredUser({ name: user.name });
+  };
+
   return (
-    <>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            alt="Your Company"
-            src="https://redpeg.com/wp-content/uploads/2022/01/Imagine-Dragons-Logo.png"
-            className="mx-auto h-10 w-auto"
-          />
-          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">
-            Create your account
-          </h2>
+    <UserContext.Provider value={registeredUser}>
+      <div className="relative min-h-screen flex flex-col items-center justify-center bg-transparent px-6 py-12">
+        {/* Header con el nombre del usuario en la esquina superior derecha */}
+        <div className="absolute top-4 right-4 text-white text-lg font-semibold">
+          <Header />
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" className="space-y-6">
+        {/* Formulario de registro */}
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <h2 className="text-center text-2xl font-bold text-white">
+            Create your account
+          </h2>
+
+          <form onSubmit={handleSubmit} className="mt-6 space-y-6">
             <div>
               <label
                 htmlFor="name"
@@ -22,16 +44,15 @@ export default function Registro() {
               >
                 Full Name
               </label>
-              <div className="mt-2">
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  autoComplete="name"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-400 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
-                />
-              </div>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                value={user.name}
+                onChange={handleChange}
+                className="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-gray-900 border border-gray-400 focus:outline-indigo-600"
+              />
             </div>
 
             <div>
@@ -41,16 +62,15 @@ export default function Registro() {
               >
                 Email Address
               </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-400 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
-                />
-              </div>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={user.email}
+                onChange={handleChange}
+                className="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-gray-900 border border-gray-400 focus:outline-indigo-600"
+              />
             </div>
 
             <div>
@@ -60,39 +80,32 @@ export default function Registro() {
               >
                 Password
               </label>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  autoComplete="new-password"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-400 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
-                />
-              </div>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                value={user.password}
+                onChange={handleChange}
+                className="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-gray-900 border border-gray-400 focus:outline-indigo-600"
+              />
             </div>
 
-            <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-[#558C99] px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-[#DF5669] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Sign Up
-              </button>
-            </div>
-          </form>
-
-          <p className="mt-10 text-center text-sm text-white">
-            Already have an account?{" "}
-            <a
-              href="#"
-              className="font-semibold text-[#558C99] hover:text-[#558C99]"
+            <button
+              type="submit"
+              className="w-full rounded-md bg-[#558C99] px-3 py-1.5 text-sm font-semibold text-white hover:bg-[#DF5669]"
             >
-              Sign in
-            </a>
-          </p>
+              Sign Up
+            </button>
+          </form>
         </div>
       </div>
-    </>
+    </UserContext.Provider>
   );
+}
+
+// Componente Header para mostrar el nombre del usuario registrado
+function Header() {
+  const user = useContext(UserContext);
+  return <div>{user ? `Welcome, ${user.name}!` : "Not logged in"}</div>;
 }
