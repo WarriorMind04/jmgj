@@ -9,15 +9,32 @@ export default function Registro() {
   const [registeredUser, setRegisteredUser] = useState<{ name: string } | null>(
     null
   );
+  const [passwordError, setPasswordError] = useState("");
+
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
 
   // Manejar cambios en los inputs
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
+
+    if (e.target.name === "password") {
+      if (!passwordRegex.test(e.target.value)) {
+        setPasswordError(
+          "La contraseña debe tener al menos 8 caracteres, 1 mayúscula y 1 carácter especial."
+        );
+      } else {
+        setPasswordError("");
+      }
+    }
   };
 
   // Manejar el envío del formulario
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!passwordRegex.test(user.password)) {
+      setPasswordError("La contraseña no cumple con los requisitos.");
+      return;
+    }
     console.log("Usuario registrado: ", user);
     setRegisteredUser({ name: user.name });
   };
@@ -89,6 +106,9 @@ export default function Registro() {
                 onChange={handleChange}
                 className="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-gray-900 border border-gray-400 focus:outline-indigo-600"
               />
+              {passwordError && (
+                <p className="mt-1 text-sm text-red-500">{passwordError}</p>
+              )}
             </div>
 
             <button
@@ -107,5 +127,5 @@ export default function Registro() {
 // Componente Header para mostrar el nombre del usuario registrado
 function Header() {
   const user = useContext(UserContext);
-  return <div>{user ? `Welcome, ${user.name}!` : "Not logged in"}</div>;
+  return <div>{user ? `${user.name}` : "No registrado"}</div>;
 }
